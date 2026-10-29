@@ -4,7 +4,7 @@ title: '#4471 · what the reports show: three problems, three tickets'
 owner: kpacholak
 status: proposed
 reviewed: 2026-10-29
-signature: kpacholak
+signature: v1.eyJzdWIiOiI0NjkwIiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMyODMyMjUsImV4cCI6MTc5MzM2OTYyNX0.XcxlJjsvULWrNQl8EnXEg5MAD03fATJ8TB6ITt4vAT4
 ---
 
 <script>
