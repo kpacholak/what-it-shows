@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="../../../../_app/immutable/entry/start.B2JSlUzu.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/chunks/WgfOfNfE.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/chunks/Ca8OSKCJ.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/chunks/CZomEjWq.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/entry/app.CbbxITv8.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/chunks/DZni_WYU.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/chunks/BMv-2JeR.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/chunks/DQhTBKxc.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/chunks/DL3LuOT-.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/nodes/0.Cfrskkg7.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/chunks/BRmqMdvF.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/nodes/5.BuCT-fK2.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/chunks/-tZeezYF.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/chunks/CCdwa9zY.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/chunks/DbG4UGrs.js" rel="modulepreload">
+		<link href="../../../../_app/immutable/chunks/iXLSwIXB.js" rel="modulepreload">
+		<!--e2jw2j--><!----><title>#4471 · what the reports show: three problems, three tickets · support kb</title>
+		<link href="../../../../_app/immutable/assets/runbook.BhhgOc_n.css" rel="stylesheet">
+		<link href="../../../../_app/immutable/assets/Callout.yLErXQDM.css" rel="stylesheet">
+		<link href="../../../../_app/immutable/assets/5.saMrSR8K.css" rel="stylesheet">
+  </head>
+  <body>
+    <div style="display: contents"><!--[--><!--[0--><!--[--><!--[--><div class="kb svelte-e2jw2j"><header><a class="crumb svelte-e2jw2j" href="/kb">support desk · kb</a> <h1 class="svelte-e2jw2j">#4471 · what the reports show: three problems, three tickets</h1> <p class="meta svelte-e2jw2j"><span>owner <b>kpacholak</b></span> <span class="status proposed svelte-e2jw2j">proposed</span> <span class="svelte-e2jw2j">reviewed 2026-10-29 · 0 days ago</span></p></header> <!--[-1--><!--]--> <main><p><a href="/kb/incidents/4471">#4471</a> is marked known: one issue, one fix queued. The reports in it say
+otherwise. Read by tenant and by body, not by subject line or intake tag, they describe three
+problems. Each has its own fix, so each now has its own ticket.</p> <p class="sum svelte-1op6c6"><strong>412</strong> reports merged into #4471
+  (427 rows in the export, 15 of them repeated) · <strong>3</strong> problems</p> <table><thead><tr><th>problem</th><th>reports</th><th>tagged as</th><th>tenants</th><th>seen</th><th>ticket</th></tr></thead><tbody><!--[--><tr><td><code>parser</code></td><td>374</td><td class="tags svelte-1op6c6">parser ×351 · hint ×23</td><td>11</td><td>2026-04-01 → 2026-10-04</td><td><!--[0--><a href="https://github.com/kpacholak/what-it-shows/issues/1">#1</a><!--]--></td></tr><tr><td><code>hint</code></td><td>33</td><td class="tags svelte-1op6c6">hint ×18 · parser ×15</td><td>3</td><td>2026-04-17 → 2026-09-22</td><td><!--[0--><a href="https://github.com/kpacholak/what-it-shows/issues/2">#2</a><!--]--></td></tr><tr><td><code>shift</code></td><td>5</td><td class="tags svelte-1op6c6">parser ×5</td><td>5</td><td>2026-04-02 → 2026-10-04</td><td><!--[0--><a href="https://github.com/kpacholak/what-it-shows/issues/3">#3</a><!--]--></td></tr><!--]--></tbody></table> <p class="note svelte-1op6c6">38 reports carry an intake tag that names the other cause.</p><!----> <aside class="warn svelte-17bri61"><!---->The queued parser fix closes only the first ticket. The other two keep coming in after it ships.<!----></aside><!----> <h2>The three problems</h2> <p><strong><code>parser</code>: the shared parser reads dates month first.</strong> Every tenant writes the day first, so
+day and month swap: a booking for 7 April goes out as 4 July. This covers app and email reports,
+and form reports from <code>booking-v2</code> tenants, whose hint is already <code>DD/MM/YYYY</code>.</p> <p><strong><code>hint</code>: <code>booking-v3</code> tells day-first people to type the month first.</strong> Its date field prints <code>MM/DD/YYYY</code>, people follow it, and the form reads the field the tenant’s way. The result looks
+like the parser bug, but a parser fix does not touch it. These are the form reports from <code>booking-v3</code> tenants. The cause table on #4471 already marks them “no ticket of its own”.</p> <p><strong><code>shift</code>: some dates move by one day, not by a swap.</strong> Tuesday shows as Monday, Lisbon gets
+Tuesday and Toronto gets Monday, an invite arrives before the booking was made. A month-first
+parser cannot move a date by one day. This looks like a date stored as midnight and shown in
+another time zone. The desk already lists these reports in <code>desk-notes.json</code> as a one-day move,
+but #4471’s table files them under <code>parser</code> by tenant.</p> <h2>How the counts are made</h2> <ul><li>One id, one report: the export pages overlap, so repeated rows are dropped first.</li> <li><code>parser</code> and <code>hint</code> come from <code>causeOf()</code> in <code>causes.ts</code>: the tenant’s locale and form, and the
+report’s channel.</li> <li><code>shift</code> is the desk’s one-day-move list. Those reports are taken out before the causes are counted.</li> <li>The intake tag is shown but never used. It is a guess from the reporter’s browser, and it names
+the wrong cause for the share counted under the table.</li></ul> <h2>Why they were merged</h2> <p><a href="/kb/decisions/0001-dedupe-by-subject">Decision 0001</a> merges reports whose subject lines match.
+All three problems produce the same subjects (“Wrong day on the invite”, “Date is wrong”), so
+subject matching put them in one ticket. The same subject is not the same cause: the <a href="/kb/triage/dedupe">triage page</a> shows the pairs.</p> <!--[0--><p class="stamp svelte-1280m42">desk ref <b class="svelte-1280m42">DR-959V-R5DH</b></p><!--]--><!----><!----></main> <footer class="svelte-e2jw2j">Pages are written by people. Tables and charts are built from data at render time.</footer></div><!--]--><!----><!--]--><!--]--> <!--[-1--><!--]--><!--]-->
+			
+			<script>
+				{
+					__sveltekit_138iogv = {
+						base: new URL("../../../..", location).pathname.slice(0, -1)
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("../../../../_app/immutable/entry/start.B2JSlUzu.js"),
+						import("../../../../_app/immutable/entry/app.CbbxITv8.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element, {
+							node_ids: [0, 5],
+							data: [null,null],
+							form: null,
+							error: null
+						});
+					});
+				}
+			</script>
+		</div>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+---
+layout: runbook
+title: '#4471 · what the reports show: three problems, three tickets'
+owner: kpacholak
+status: proposed
+reviewed: 2026-10-29
+signature: kpacholak
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const REPO = 'https://github.com/kpacholak/what-it-shows/issues';
+  const tickets = { parser: `${REPO}/1`, hint: `${REPO}/2`, shift: `${REPO}/3` };
+</script>
+
+[#4471](/kb/incidents/4471) is marked known: one issue, one fix queued. The reports in it say
+otherwise. Read by tenant and by body, not by subject line or intake tag, they describe three
+problems. Each has its own fix, so each now has its own ticket.
+
+<ProblemTable ticket={4471} {tickets} />
+
+<Callout kind="warn">
+The queued parser fix closes only the first ticket. The other two keep coming in after it ships.
+</Callout>
+
+## The three problems
+
+**`parser`: the shared parser reads dates month first.** Every tenant writes the day first, so
+day and month swap: a booking for 7 April goes out as 4 July. This covers app and email reports,
+and form reports from `booking-v2` tenants, whose hint is already `DD/MM/YYYY`.
+
+**`hint`: `booking-v3` tells day-first people to type the month first.** Its date field prints
+`MM/DD/YYYY`, people follow it, and the form reads the field the tenant's way. The result looks
+like the parser bug, but a parser fix does not touch it. These are the form reports from
+`booking-v3` tenants. The cause table on #4471 already marks them "no ticket of its own".
+
+**`shift`: some dates move by one day, not by a swap.** Tuesday shows as Monday, Lisbon gets
+Tuesday and Toronto gets Monday, an invite arrives before the booking was made. A month-first
+parser cannot move a date by one day. This looks like a date stored as midnight and shown in
+another time zone. The desk already lists these reports in `desk-notes.json` as a one-day move,
+but #4471's table files them under `parser` by tenant.
+
+## How the counts are made
+
+- One id, one report: the export pages overlap, so repeated rows are dropped first.
+- `parser` and `hint` come from `causeOf()` in `causes.ts`: the tenant's locale and form, and the
+  report's channel.
+- `shift` is the desk's one-day-move list. Those reports are taken out before the causes are counted.
+- The intake tag is shown but never used. It is a guess from the reporter's browser, and it names
+  the wrong cause for the share counted under the table.
+
+## Why they were merged
+
+[Decision 0001](/kb/decisions/0001-dedupe-by-subject) merges reports whose subject lines match.
+All three problems produce the same subjects ("Wrong day on the invite", "Date is wrong"), so
+subject matching put them in one ticket. The same subject is not the same cause: the
+[triage page](/kb/triage/dedupe) shows the pairs.
+
+<RenderStamp {signature} />
